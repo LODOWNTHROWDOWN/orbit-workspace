@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .
+    ports: ['8080:8080']
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: '8080'
+      DB_HOST: db
+      DB_PORT: '3306'
+      DB_NAME: orbit
+      DB_USER: orbit
+      DB_PASSWORD: orbit_local_only
+      CSRF_SECRET: local-development-not-for-production
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: orbit
+      MYSQL_USER: orbit
+      MYSQL_PASSWORD: orbit_local_only
+      MYSQL_ROOT_PASSWORD: root_local_only
+    volumes: ['orbit_mysql:/var/lib/mysql']
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  orbit_mysql:
