@@ -10,9 +10,6 @@ FROM php:8.4-apache
 RUN apt-get update && apt-get install -y --no-install-recommends libonig-dev \
     && docker-php-ext-install pdo_mysql mbstring \
     && a2enmod rewrite headers \
-    # Apache must load exactly one MPM; mod_php requires prefork.
-    && a2dismod -f mpm_event mpm_worker \
-    && a2enmod mpm_prefork \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=assets /build/dist/ /var/www/html/
 COPY server/public/ /var/www/html/api/
