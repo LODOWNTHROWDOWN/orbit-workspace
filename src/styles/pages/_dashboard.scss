@@ -1,0 +1,187 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ---- Metric tiles ----
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 44px;
+
+  @include below(tablet) {
+    gap: 8px;
+  }
+
+  @include below(phone) {
+    grid-template-columns: repeat(2, 1fr);
+
+    .metric:last-child {
+      grid-column: span 2;
+    }
+  }
+}
+
+.metric {
+  @include card(24px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+  box-shadow: $shadow-card;
+
+  span {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  strong {
+    font-size: 35px;
+    letter-spacing: -1.4px;
+  }
+
+  small {
+    color: $text-subtle;
+  }
+
+  @include below(tablet) {
+    padding: 14px;
+
+    strong {
+      font-size: 26px;
+    }
+  }
+}
+
+.metric-icon {
+  display: flex;
+  font-size: 25px;
+  color: $violet;
+  background: color.change($violet, $alpha: .3);
+  padding: 10px;
+  border-radius: $radius-pill;
+}
+
+.metric-text {
+  display: flex;
+  flex-direction: column;
+}
+
+// ---- Active projects list ----
+.active-projects {
+  width: 60%;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+}
+
+.projects-heading {
+  @include flex-between;
+  padding: 0 23px;
+  border-bottom: 1px solid $border;
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
+.view-all {
+  border: none;
+  background: transparent;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .icon {
+    transition: transform .25s ease;
+  }
+
+  &:hover .icon {
+    transform: translateX(6px);
+  }
+}
+
+.project-list {
+  display: grid;
+  grid-auto-rows: 1fr;
+}
+
+.project-item {
+  display: grid;
+  grid-template-columns: 1fr 3fr 2fr .5fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 23px;
+  border-bottom: 1px solid $border;
+  text-align: left;
+  color: $ink;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  strong {
+    font-size: 16px;
+  }
+
+  > div:not(.project-symbol) {
+    font-size: 13px;
+    color: $text-muted;
+    line-height: 1.5;
+  }
+
+  .project-text p {
+    margin: 0;
+  }
+
+  .project-symbol {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $ink;
+    color: $surface;
+    padding: 20px 13px;
+  }
+}
+
+.progress-track {
+  width: 100%;
+  height: 15px;
+  background-color: $surface-muted;
+  border-radius: $radius;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: $progress;
+  transition: width .3s ease;
+}
+
+// ---- Misc ----
+.section-heading {
+  @include flex-between;
+  margin-bottom: 17px;
+
+  h2 {
+    font-size: 20px;
+    margin: 0;
+  }
+
+  span {
+    font-size: 13px;
+    color: $text-muted;
+  }
+}
+
+.callout {
+  margin-top: 32px;
+  border-radius: $radius-lg;
+  padding: 20px 24px;
+  border: 1px dashed color.mix($brand, $border, 20%);
+  background: color.mix($brand, $page-bg, 5%);
+
+  p {
+    color: $text-muted;
+    font-size: 14px;
+  }
+}

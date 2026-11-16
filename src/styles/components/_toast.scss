@@ -1,0 +1,18 @@
+@use '../abstracts' as *;
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: $ink;
+  color: $surface;
+  border-radius: $radius;
+  padding: 14px 20px;
+  box-shadow: $shadow-toast;
+  max-width: 320px;
+  z-index: 20;
+
+  &[hidden] {
+    display: none;
+  }
+}

@@ -1,0 +1,177 @@
+@use '../abstracts' as *;
+
+.layout {
+  display: grid;
+  grid-template-columns: 238px minmax(0, 1fr);
+  min-height: 100vh;
+
+  @include below(tablet) {
+    display: block;
+  }
+}
+
+// ---- Sidebar ----
+.sidebar {
+  background: $sidebar-bg;
+  color: $sidebar-text;
+  padding: 30px 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  @include below(tablet) {
+    padding: 10px 18px;
+    gap: 10px;
+
+    nav {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 25px;
+  letter-spacing: -1px;
+  padding-left: 13px;
+  color: $surface;
+
+  @include below(tablet) {
+    display: none;
+  }
+}
+
+.brand-mark {
+  color: $accent-light;
+}
+
+.brand-dot {
+  color: $accent;
+}
+
+.nav-link {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  color: $sidebar-text;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  padding: 14px;
+  border-radius: $radius;
+
+  &.active,
+  &:hover {
+    background: $sidebar-hover;
+    color: $surface;
+  }
+
+  @include below(tablet) {
+    width: auto;
+    padding: 10px 20px;
+  }
+}
+
+.sidebar-foot {
+  margin-top: auto;
+  font-size: 12px;
+  padding-left: 14px;
+
+  @include below(tablet) {
+    display: none;
+  }
+}
+
+.demo-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $success;
+  margin-right: 6px;
+}
+
+// ---- Main column ----
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  @include flex-between;
+  height: 80px;
+  border-bottom: 1px solid $border;
+  background: $surface;
+  padding: 0 5%;
+
+  @include below(tablet) {
+    height: 60px;
+  }
+}
+
+.eyebrow,
+.overline {
+  @include caps-label;
+}
+
+.eyebrow {
+  @include below(tablet) {
+    display: none;
+  }
+}
+
+.overline {
+  margin: 0;
+}
+
+.demo-pill {
+  background: $brand-soft;
+  padding: 9px 14px;
+  border-radius: $radius-pill;
+  color: $brand-hover;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .6px;
+}
+
+.mobile-brand {
+  display: none;
+
+  @include below(tablet) {
+    display: block;
+    font-weight: 800;
+    color: $ink-soft;
+  }
+}
+
+main {
+  padding: 44px 5% 70px;
+  max-width: 1450px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+
+  @include below(tablet) {
+    padding: 28px 18px 60px;
+  }
+}
+
+.footer {
+  font-size: 12px;
+  color: $text-subtle;
+  text-align: center;
+  padding: 22px;
+}
+
+.loading {
+  color: $text-muted;
+}

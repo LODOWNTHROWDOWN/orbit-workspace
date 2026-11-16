@@ -1,0 +1,44 @@
+@use '../abstracts' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: $radius;
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &.primary {
+    background: $brand;
+    color: $surface;
+
+    &:hover {
+      background: $brand-hover;
+    }
+  }
+
+  &.secondary {
+    background: $surface-tint;
+    color: $ink-soft;
+  }
+}
+
+.back-link {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $brand;
+  margin-bottom: 24px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.icon-button {
+  border: 0;
+  background: transparent;
+  font-size: 19px;
+}

@@ -1,0 +1,39 @@
+<div class="page-heading">
+  <div><h1>Good afternoon</h1>
+    <p>Here's what's happening across your projects.</p>
+  </div>
+  <button class="button primary" id="new-project" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> New project</button>
+</div>
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-list-check"/></svg></div>
+    <div class="metric-text">
+      <strong id="task-count">12</strong>
+      <small>Open Tasks</small>
+    </div>
+  </div>
+  <div class="metric">
+    <strong id="current-project-count">4</strong>
+    <small>In Progress</small>
+  </div>
+  <div class="metric">
+    <strong>18</strong>
+    <small>Completed</small>
+  </div>
+  <div class="metric">
+    <strong id="project-count">3</strong>
+    <small>Active Projects</small>
+  </div>
+</div>
+<div class="active-projects">
+  <div class="projects-heading">
+    <h2>Active Projects</h2>
+    <button class="view-all" type="button">View All <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+  </div>
+  <div id="project-list" class="project-list"></div>
+</div>
+<div class="callout">
+  <strong>Try the live demo</strong>
+  <p>Create a project, add tasks, and update their status. 
+    Changes are saved in your isolated, temporary workspace.</p>
+</div>

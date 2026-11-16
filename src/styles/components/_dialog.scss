@@ -1,0 +1,65 @@
+@use '../abstracts' as *;
+
+dialog {
+  border: 0;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-dialog;
+  width: min(94vw, 490px);
+  padding: 28px;
+
+  &::backdrop {
+    background: rgba($sidebar-bg, .53);
+  }
+}
+
+.dialog-head {
+  @include flex-between;
+  margin-bottom: 21px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+#fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 7px;
+  }
+
+  input,
+  textarea,
+  select {
+    @include field;
+    padding: 12px;
+    width: 100%;
+  }
+}
+
+.field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  @include below(phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}

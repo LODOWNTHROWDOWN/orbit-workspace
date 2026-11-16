@@ -1,42 +1,212 @@
 import './style.scss';
 import {request, initialize} from './api.js';
-const app=document.querySelector('#app');
-const state={projects:[],tasks:[],activeProject:null,view:'dashboard'};
-const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function shell(){
-  app.innerHTML=`<div class="layout"><aside class="sidebar"><div class="brand"><span class="brand-mark">◉</span> orbit<span class="brand-dot">.</span></div><nav aria-label="Primary navigation"><button id="nav-dashboard" class="nav-link" type="button">▦ <span>Dashboard</span></button><button id="nav-projects" class="nav-link" type="button">▤ <span>Projects</span></button></nav><div class="sidebar-foot"><span class="demo-dot"></span> Temporary demo workspace</div></aside><div class="content"><header class="topbar"><span class="mobile-brand">◉ orbit.</span><span class="eyebrow">ORBIT / WORKSPACE</span><div class="topbar-actions"><span class="demo-pill">DEMO MODE</span></div></header><main id="main" tabindex="-1"></main><footer class="footer">Built with vanilla JavaScript, PHP, SCSS and MySQL · Demo data expires after 24 hours</footer></div></div><div id="toast" role="status" aria-live="polite" class="toast" hidden></div><dialog id="editor"><form id="editor-form"><div class="dialog-head"><h2 id="dialog-title">Create</h2><button class="icon-button" type="button" id="close-dialog" aria-label="Close dialog">✕</button></div><div id="fields"></div><div class="dialog-actions"><button type="button" id="cancel-dialog" class="button secondary">Cancel</button><button class="button primary" type="submit">Save</button></div></form></dialog>`;
-  document.querySelector('#nav-dashboard').onclick=()=>{state.view='dashboard';render()};
-  document.querySelector('#nav-projects').onclick=()=>{state.view='projects';render()};
-  document.querySelector('#close-dialog').onclick=()=>document.querySelector('#editor').close();
-  document.querySelector('#cancel-dialog').onclick=()=>document.querySelector('#editor').close();
+import {templates} from './templates.js';
+
+const app = document.querySelector('#app');
+const state = {projects: [], tasks: [], activeProject: null, view: 'dashboard'};
+const $ = (selector, root = document) => root.querySelector(selector);
+
+function emptyMessage(text, className = 'lane-empty') {
+  const el = document.createElement('p');
+  el.className = className;
+  el.textContent = text;
+  return el;
+}
+function shell() {
+  app.replaceChildren(templates.shell());
+  $('#nav-dashboard').addEventListener('click', () => {state.view = 'dashboard'; render();});
+  $('#nav-projects').addEventListener('click', () => {state.view = 'projects'; render();});
+  $('#close-dialog').addEventListener('click', () => $('#editor').close());
+  $('#cancel-dialog').addEventListener('click', () => $('#editor').close());
 }
 let toastTimeout;
-function notice(message){const el=document.querySelector('#toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>el.hidden=true,4500)}
-function error(e){notice(e.message || 'Something went wrong. Please retry.');}
-async function load(){const data=await request('/projects');state.projects=data.projects; if(state.activeProject&&!state.projects.some(p=>p.id===state.activeProject)) state.activeProject=null; if(state.activeProject){const r=await request(`/projects/${state.activeProject}/tasks`);state.tasks=r.tasks;}else state.tasks=[];render()}
-function projectCard(p){return `<button class="project-card" data-project="${p.id}"><span class="project-symbol">▦</span><strong>${esc(p.name)}</strong><span>${esc(p.description||'No description yet')}</span><small>View project <span aria-hidden="true">→</span></small></button>`}
-function render(){
-  document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
-  document.querySelector(`#nav-${state.view==='dashboard'?'dashboard':'projects'}`).classList.add('active');
-  const main=document.querySelector('#main');
-  if(state.view==='dashboard'){
-    main.innerHTML=`<div class="page-heading"><div><p class="overline">WORKSPACE OVERVIEW</p><h1>Welcome to Orbit</h1><p>Manage projects and keep the important things moving.</p></div><button class="button primary" id="new-project">+ New project</button></div><div class="metrics"><div class="metric"><span>Projects</span><strong>${state.projects.length}</strong><small>In this workspace</small></div><div class="metric"><span>Current project</span><strong>${state.activeProject?'1':'—'}</strong><small>Open in board view</small></div><div class="metric"><span>Workspace</span><strong>24h</strong><small>Temporary data lifetime</small></div></div><div class="section-heading"><h2>Projects</h2><span>${state.projects.length} total</span></div><div class="project-grid">${state.projects.map(projectCard).join('')||'<p>No projects yet. Create your first one.</p>'}</div><div class="callout"><strong>Try the live demo</strong><p>Create a project, add tasks, and update their status. Changes are saved in your isolated, temporary workspace.</p></div>`;
-  }else if(!state.activeProject){
-    main.innerHTML=`<div class="page-heading"><div><p class="overline">YOUR PROJECTS</p><h1>Projects</h1><p>Select a project to open its task board.</p></div><button class="button primary" id="new-project">+ New project</button></div><div class="project-grid">${state.projects.map(projectCard).join('')||'<p>No projects yet.</p>'}</div>`;
-  }else{
-    const p=state.projects.find(x=>x.id===state.activeProject);
-    main.innerHTML=`<button class="back-link" id="back-projects">← All projects</button><div class="page-heading"><div><p class="overline">PROJECT BOARD</p><h1>${esc(p?.name||'Project')}</h1><p>${esc(p?.description||'Manage this project’s tasks.')}</p></div><button class="button primary" id="new-task">+ New task</button></div><div class="board-toolbar"><label for="filter">Search tasks</label><input id="filter" type="search" placeholder="Search task titles…"/><label for="priority-filter">Priority</label><select id="priority-filter"><option value="">All</option><option>high</option><option>medium</option><option>low</option></select></div><div id="board" class="board"></div>`;
-    document.querySelector('#back-projects').onclick=()=>{state.activeProject=null;state.view='projects';render()};
-    document.querySelector('#new-task').onclick=()=>openTaskEditor();
-    document.querySelector('#filter').oninput=drawBoard;
-    document.querySelector('#priority-filter').onchange=drawBoard;
+function notice(message) {
+  const el = $('#toast');
+  el.textContent = message;
+  el.hidden = false;
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {el.hidden = true;}, 4500);
+}
+function error(e) {notice(e.message || 'Something went wrong. Please retry.');}
+async function load() {
+  const data = await request('/projects');
+  state.projects = data.projects;
+  if (state.activeProject && !state.projects.some(p => p.id === state.activeProject)) state.activeProject = null;
+  if (state.activeProject) {
+    const result = await request(`/projects/${state.activeProject}/tasks`);
+    state.tasks = result.tasks;
+  } else state.tasks = [];
+  render();
+}
+// Project cards (Projects page) and listings (dashboard) share the same data and behavior.
+function buildProjectEntry(createElement, project) {
+  const entry = createElement();
+  entry.dataset.project = String(project.id);
+  $('[data-field="name"]', entry).textContent = project.name;
+  $('[data-field="description"]', entry).textContent = project.description || 'No description yet';
+  entry.addEventListener('click', async () => {
+    state.activeProject = Number(project.id);
+    state.view = 'projects';
+    try {await load();} catch (e) {error(e);}
+  });
+  return entry;
+}
+function populateProjects() {
+  const grid = $('#project-grid');
+  const list = $('#project-list');
+  if (!state.projects.length) {
+    if (grid) {
+      grid.append(
+        emptyMessage('No projects yet. Create your first one.', 'empty-projects')
+      );
+    }
+
+    if (list) {
+      list.append(
+        emptyMessage('No projects yet. Create your first one.', 'empty-projects')
+      );
+    }
+    return;
+  }
+  if (grid) {
+    state.projects.forEach(project => {
+      grid.append(buildProjectEntry(templates.projectCard, project));
+    });
+  }
+
+  if (list) {
+    state.projects.forEach(project => {
+      list.append(buildProjectEntry(templates.projectListing, project));
+    });
+  }
+}
+function render() {
+  document.querySelectorAll('.nav-link').forEach(el => {
+    const active = el.id === `nav-${state.view === 'dashboard' ? 'dashboard' : 'projects'}`;
+    el.classList.toggle('active', active);
+    if (active) el.setAttribute('aria-current', 'page');
+    else el.removeAttribute('aria-current');
+  });
+  const main = $('#main');
+  if (state.view === 'dashboard') {
+    main.replaceChildren(templates.dashboard());
+    $('#project-count').textContent = String(state.projects.length);
+    $('#current-project-count').textContent = state.activeProject ? '1' : '—';
+    //$('#projects-total').textContent = `${state.projects.length} total`;
+    populateProjects();
+  } else if (!state.activeProject) {
+    main.replaceChildren(templates.projects());
+    populateProjects();
+  } else {
+    const project = state.projects.find(p => p.id === state.activeProject);
+    main.replaceChildren(templates.board());
+    $('#board-project-name').textContent = project?.name || 'Project';
+    $('#board-project-description').textContent = project?.description || 'Manage this project’s tasks.';
+    $('#back-projects').addEventListener('click', () => {state.activeProject = null; state.view = 'projects'; render();});
+    $('#new-task').addEventListener('click', openTaskEditor);
+    $('#filter').addEventListener('input', drawBoard);
+    $('#priority-filter').addEventListener('change', drawBoard);
     drawBoard();
   }
-  document.querySelectorAll('[data-project]').forEach(btn=>btn.onclick=async()=>{state.activeProject=Number(btn.dataset.project);state.view='projects';try{await load()}catch(e){error(e)}});
-  document.querySelector('#new-project')?.addEventListener('click',openProjectEditor);
+  $('#new-project')?.addEventListener('click', openProjectEditor);
 }
-function drawBoard(){const host=document.querySelector('#board');if(!host)return;const term=document.querySelector('#filter').value.toLowerCase().trim(),prio=document.querySelector('#priority-filter').value;const tasks=state.tasks.filter(t=>(!term||t.title.toLowerCase().includes(term))&&(!prio||t.priority===prio));const statuses=[['todo','To Do'],['progress','In Progress'],['done','Done']];host.innerHTML=statuses.map(([value,label])=>`<section class="lane" aria-label="${label}"><div class="lane-title"><h2>${label}</h2><span>${tasks.filter(t=>t.status===value).length}</span></div>${tasks.filter(t=>t.status===value).map(t=>`<article class="task-card"><strong>${esc(t.title)}</strong><p>${esc(t.description||'No description')}</p><div class="task-meta"><span class="priority ${t.priority}">${esc(t.priority)}</span>${t.due_date?`<time>${esc(t.due_date)}</time>`:''}</div><label for="task-status-${t.id}">Status</label><select id="task-status-${t.id}" data-task-status="${t.id}">${statuses.map(([v,l])=>`<option value="${v}" ${t.status===v?'selected':''}>${l}</option>`).join('')}</select></article>`).join('')||'<p class="lane-empty">No tasks</p>'}</section>`).join('');host.querySelectorAll('[data-task-status]').forEach(s=>s.onchange=async()=>{const previous=state.tasks.find(t=>t.id===Number(s.dataset.taskStatus));try{await request(`/tasks/${previous.id}`,{method:'PATCH',body:{status:s.value}});await load();notice('Task status updated')}catch(e){s.value=previous.status;error(e)}})}
-function openProjectEditor(){const dialog=document.querySelector('#editor');document.querySelector('#dialog-title').textContent='New project';document.querySelector('#fields').innerHTML=`<label for="project-name">Project name <span aria-hidden="true">*</span></label><input id="project-name" name="name" required maxlength="100" placeholder="e.g. Product launch"/><label for="project-description">Description</label><textarea id="project-description" name="description" maxlength="500" rows="3" placeholder="What is this project about?"></textarea>`;document.querySelector('#editor-form').onsubmit=async(e)=>{e.preventDefault();const form=new FormData(e.target);try{await request('/projects',{method:'POST',body:{name:form.get('name'),description:form.get('description')}});dialog.close();await load();notice('Project created')}catch(err){error(err)}};dialog.showModal();dialog.querySelector('input').focus()}
-function openTaskEditor(){const dialog=document.querySelector('#editor');document.querySelector('#dialog-title').textContent='New task';document.querySelector('#fields').innerHTML=`<label for="task-name">Task title <span aria-hidden="true">*</span></label><input id="task-name" name="title" required maxlength="140" placeholder="What needs to be done?"/><label for="task-description">Description</label><textarea id="task-description" name="description" maxlength="1000" rows="3"></textarea><div class="field-pair"><div><label for="task-priority">Priority</label><select id="task-priority" name="priority"><option>medium</option><option>low</option><option>high</option></select></div><div><label for="task-due">Due date</label><input id="task-due" name="due_date" type="date"/></div></div>`;document.querySelector('#editor-form').onsubmit=async(e)=>{e.preventDefault();const form=new FormData(e.target);try{await request(`/projects/${state.activeProject}/tasks`,{method:'POST',body:{title:form.get('title'),description:form.get('description'),priority:form.get('priority'),due_date:form.get('due_date')||null}});dialog.close();await load();notice('Task created')}catch(err){error(err)}};dialog.showModal();dialog.querySelector('input').focus()}
-async function start(){shell();document.querySelector('#main').innerHTML='<p class="loading">Loading workspace…</p>';try{await initialize();await load()}catch(e){document.querySelector('#main').innerHTML='<h1>Unable to load workspace</h1><p>Check that the PHP API and database are running, then refresh.</p>';error(e)}}
+function buildTaskCard(task) {
+  const card = templates.taskCard();
+  $('[data-field="title"]', card).textContent = task.title;
+  $('[data-field="description"]', card).textContent = task.description || 'No description';
+  const priority = $('[data-field="priority"]', card);
+  priority.textContent = task.priority;
+  priority.classList.add(['high', 'medium', 'low'].includes(task.priority) ? task.priority : 'medium');
+  if (task.due_date) {
+    const dueDate = $('[data-field="due-date"]', card);
+    dueDate.hidden = false;
+    dueDate.dateTime = task.due_date;
+    dueDate.textContent = task.due_date;
+  }
+  const select = $('[data-task-status]', card);
+  const statusId = `task-status-${task.id}`;
+  select.id = statusId;
+  select.dataset.taskStatus = String(task.id);
+  select.value = task.status;
+  $('[data-field="status-label"]', card).htmlFor = statusId;
+  select.addEventListener('change', async () => {
+    const newStatus = select.value;
+    select.disabled = true;
+    try {
+      await request(`/tasks/${task.id}`, {method: 'PATCH', body: {status: newStatus}});
+      await load();
+      notice('Task status updated');
+    } catch (e) {
+      select.value = task.status;
+      select.disabled = false;
+      error(e);
+    }
+  });
+  return card;
+}
+function drawBoard() {
+  const host = $('#board');
+  if (!host) return;
+  const term = $('#filter').value.toLowerCase().trim();
+  const priority = $('#priority-filter').value;
+  const filtered = state.tasks.filter(t =>
+    (!term || t.title.toLowerCase().includes(term)) && (!priority || t.priority === priority)
+  );
+  const statuses = [['todo', 'To Do'], ['progress', 'In Progress'], ['done', 'Done']];
+  host.replaceChildren();
+  statuses.forEach(([value, label]) => {
+    const lane = templates.lane();
+    lane.setAttribute('aria-label', label);
+    $('[data-field="name"]', lane).textContent = label;
+    const tasks = filtered.filter(t => t.status === value);
+    $('[data-field="count"]', lane).textContent = String(tasks.length);
+    const slot = $('[data-slot="tasks"]', lane);
+    if (!tasks.length) slot.append(emptyMessage('No tasks'));
+    else tasks.forEach(t => slot.append(buildTaskCard(t)));
+    host.append(lane);
+  });
+}
+function openEditor(title, fields, onSubmit) {
+  const dialog = $('#editor');
+  $('#dialog-title').textContent = title;
+  $('#fields').replaceChildren(fields);
+  const form = $('#editor-form');
+  form.reset();
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    try {
+      await onSubmit(new FormData(form));
+      dialog.close();
+      await load();
+    } catch (err) {error(err);}
+    finally {submitButton.disabled = false;}
+  };
+  dialog.showModal();
+  $('#fields input')?.focus();
+}
+function openProjectEditor() {
+  openEditor('New project', templates.projectForm(), async form => {
+    await request('/projects', {method: 'POST', body: {name: form.get('name'), description: form.get('description')}});
+    notice('Project created');
+  });
+}
+function openTaskEditor() {
+  openEditor('New task', templates.taskForm(), async form => {
+    await request(`/projects/${state.activeProject}/tasks`, {method: 'POST', body: {
+      title: form.get('title'), description: form.get('description'), priority: form.get('priority'), due_date: form.get('due_date') || null
+    }});
+    notice('Task created');
+  });
+}
+async function start() {
+  shell();
+  $('#main').replaceChildren(emptyMessage('Loading workspace…', 'loading'));
+  try {await initialize(); await load();}
+  catch (e) {
+    $('#main').innerHTML = '<h1>Unable to load workspace</h1><p>Check that the PHP API and database are running, then refresh.</p>';
+    error(e);
+  }
+}
 start();

@@ -1,0 +1,11 @@
+<button class="back-link" id="back-projects" type="button"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg> All projects</button>
+<div class="page-heading">
+  <div><p class="overline">PROJECT BOARD</p><h1 id="board-project-name"></h1><p id="board-project-description"></p></div>
+  <button class="button primary" id="new-task" type="button"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> New task</button>
+</div>
+<div class="board-toolbar">
+  <label for="filter">Search tasks</label><input id="filter" type="search" placeholder="Search task titles…"/>
+  <label for="priority-filter">Priority</label>
+  <select id="priority-filter"><option value="">All</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+</div>
+<div id="board" class="board"></div>

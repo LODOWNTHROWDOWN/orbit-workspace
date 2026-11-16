@@ -1,0 +1,49 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  @include card;
+  min-height: 190px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  color: $ink;
+
+  &:hover {
+    border-color: color.mix($accent, $surface, 75%);
+    box-shadow: $shadow-hover;
+  }
+
+  strong {
+    font-size: 17px;
+  }
+
+  > span:not(.project-symbol) {
+    font-size: 13px;
+    color: $text-muted;
+    line-height: 1.5;
+  }
+
+  small {
+    margin-top: auto;
+    color: $brand;
+    font-weight: 700;
+  }
+}
+
+// Square icon badge used by project cards and dashboard listings.
+.project-symbol {
+  padding: 10px 13px;
+  border-radius: $radius;
+  background: $brand-soft;
+  color: $brand;
+  font-size: 20px;
+}

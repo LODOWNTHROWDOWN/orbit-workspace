@@ -1,0 +1,39 @@
+<!-- Icon sprite: reference with <svg class="icon"><use href="#i-name"/></svg> -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+  <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-list-check" viewBox="0 0 24 24"><path d="M3 6l2 2 3-3M3 16l2 2 3-3M12 7h9M12 17h9"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+</svg>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><svg class="icon brand-mark" aria-hidden="true"><use href="#i-orbit"/></svg> orbit<span class="brand-dot">.</span></div>
+    <nav aria-label="Primary navigation">
+      <button id="nav-dashboard" class="nav-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg> <span>Dashboard</span></button>
+      <button id="nav-projects" class="nav-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg> <span>Projects</span></button>
+    </nav>
+    <div class="sidebar-foot"><span class="demo-dot"></span> Temporary demo workspace</div>
+  </aside>
+  <div class="content">
+    <header class="topbar">
+      <span class="mobile-brand"><svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg> orbit.</span>
+      <span class="eyebrow">ORBIT / WORKSPACE</span>
+      <div class="topbar-actions"><span class="demo-pill">DEMO MODE</span></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <footer class="footer">Built with vanilla JavaScript, PHP, SCSS and MySQL · Demo data expires after 24 hours</footer>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite" class="toast" hidden></div>
+<dialog id="editor" aria-labelledby="dialog-title">
+  <form id="editor-form">
+    <div class="dialog-head"><h2 id="dialog-title">Create</h2><button class="icon-button" type="button" id="close-dialog" aria-label="Close dialog"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+    <div id="fields"></div>
+    <div class="dialog-actions"><button type="button" id="cancel-dialog" class="button secondary">Cancel</button><button class="button primary" type="submit">Save</button></div>
+  </form>
+</dialog>

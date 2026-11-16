@@ -1,0 +1,8 @@
+<label for="task-name">Task title <span aria-hidden="true">*</span></label>
+<input id="task-name" name="title" required maxlength="140" placeholder="What needs to be done?" />
+<label for="task-description">Description</label>
+<textarea id="task-description" name="description" maxlength="1000" rows="3"></textarea>
+<div class="field-pair">
+  <div><label for="task-priority">Priority</label><select id="task-priority" name="priority"><option value="medium">Medium</option><option value="low">Low</option><option value="high">High</option></select></div>
+  <div><label for="task-due">Due date</label><input id="task-due" name="due_date" type="date" /></div>
+</div>

@@ -10,12 +10,6 @@ until php /opt/orbit/bin/migrate.php; do
   sleep 2
 done
 
-# Ensure only Apache's prefork MPM is enabled
-a2dismod -f mpm_event mpm_worker 2>/dev/null || true
-rm -f /etc/apache2/mods-enabled/mpm_event.* \
-      /etc/apache2/mods-enabled/mpm_worker.*
-a2enmod mpm_prefork
-
 # Verify Apache configuration before starting
 apache2ctl configtest
 

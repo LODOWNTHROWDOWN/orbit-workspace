@@ -1,0 +1,60 @@
+@use 'sass:color';
+
+// ---- Typography ----
+$font-stack: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+// ---- Brand ----
+$brand: #5145cf;
+$brand-hover: color.adjust($brand, $lightness: -8%);
+$brand-soft: #eeedff;
+$accent: #818cf8;
+$accent-light: #a5b4fc;
+$violet: #7c3aed;
+
+// ---- Text ----
+$ink: #19243b;
+$ink-soft: #2e3b55;
+$text-muted: #69758b;
+$text-subtle: #8490a4;
+
+// ---- Surfaces & borders ----
+$page-bg: #f5f6fa;
+$surface: #fff;
+$surface-tint: #eef1f7;
+$surface-muted: #ebedf4;
+$border: #e4e9f2;
+$border-strong: #d5dce8;
+
+// ---- Sidebar ----
+$sidebar-bg: #101a30;
+$sidebar-hover: #253351;
+$sidebar-text: #aab6d2;
+
+// ---- Status ----
+$success: #5ee1b2;
+$progress: #4caf50;
+
+// Task priority badges: (text color, background)
+$priorities: (
+  high: (#9a3412, #ffedd5),
+  medium: (#7c5700, #fef3c7),
+  low: (#065f46, #d1fae5),
+);
+
+// ---- Shape ----
+$radius-sm: 8px;
+$radius: 10px;
+$radius-lg: 14px;
+$radius-xl: 18px;
+$radius-pill: 999px;
+
+$shadow-card: 0 3px 15px rgba($ink, .03);
+$shadow-hover: 0 9px 26px rgba($ink, .07);
+$shadow-toast: 0 8px 35px rgba(#000, .2);
+$shadow-dialog: 0 25px 80px rgba($ink, .33);
+
+// ---- Breakpoints (max-width) ----
+$breakpoints: (
+  tablet: 800px,
+  phone: 540px,
+);

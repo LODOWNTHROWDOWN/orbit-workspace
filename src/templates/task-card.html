@@ -1,0 +1,11 @@
+<template id="task-card-template">
+  <article class="task-card">
+    <strong data-field="title"></strong>
+    <p data-field="description"></p>
+    <div class="task-meta"><span class="priority" data-field="priority"></span><time data-field="due-date" hidden></time></div>
+    <label data-field="status-label">Status</label>
+    <select data-task-status="">
+      <option value="todo">To Do</option><option value="progress">In Progress</option><option value="done">Done</option>
+    </select>
+  </article>
+</template>

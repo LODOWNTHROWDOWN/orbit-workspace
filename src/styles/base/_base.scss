@@ -1,0 +1,45 @@
+@use '../abstracts' as *;
+
+:root {
+  font-family: $font-stack;
+  color: $ink;
+  background: $page-bg;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid $accent;
+  outline-offset: 2px;
+}
+
+// Inline SVG icons from the sprite in shell.html; sized and colored by the text around them.
+.icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
