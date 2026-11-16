@@ -205,7 +205,12 @@ async function start() {
   $('#main').replaceChildren(emptyMessage('Loading workspace…', 'loading'));
   try {await initialize(); await load();}
   catch (e) {
-    $('#main').innerHTML = '<h1>Unable to load workspace</h1><p>Check that the PHP API and database are running, then refresh.</p>';
+    // Show the server's reason (e.g. "demo is at capacity") when there is one.
+    const heading = document.createElement('h1');
+    heading.textContent = 'Unable to load workspace';
+    const detail = document.createElement('p');
+    detail.textContent = e.message || 'Please try again in a moment.';
+    $('#main').replaceChildren(heading, detail);
     error(e);
   }
 }

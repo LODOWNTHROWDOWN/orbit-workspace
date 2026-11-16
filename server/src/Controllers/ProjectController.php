@@ -7,12 +7,11 @@ use Orbit\Http\HttpException;
 use Orbit\Http\Request;
 use Orbit\Http\Response;
 use Orbit\Repositories\ProjectRepository;
+use Orbit\Limits;
 use Orbit\Validator;
 
 final class ProjectController
 {
-    public const MAX_PER_WORKSPACE = 10;
-
     public function __construct(
         private readonly ProjectRepository $projects,
         private readonly int $workspaceId,
@@ -30,8 +29,8 @@ final class ProjectController
         $name = Validator::text($body['name'] ?? null, 100, true);
         $description = Validator::text($body['description'] ?? '', 500);
 
-        if ($this->projects->countForWorkspace($this->workspaceId) >= self::MAX_PER_WORKSPACE) {
-            throw new HttpException(422, 'Demo limit: ' . self::MAX_PER_WORKSPACE . ' projects per workspace.');
+        if ($this->projects->countForWorkspace($this->workspaceId) >= Limits::PROJECTS_PER_WORKSPACE) {
+            throw new HttpException(422, 'Demo limit: ' . Limits::PROJECTS_PER_WORKSPACE . ' projects per workspace.');
         }
 
         $id = $this->projects->create($this->workspaceId, $name, $description);

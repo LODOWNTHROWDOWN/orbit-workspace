@@ -41,6 +41,19 @@ final class Request
         return is_string($value) ? $value : null;
     }
 
+    /**
+     * The visitor's IP address. Railway's edge proxy sets X-Real-IP to the
+     * client address; without it (local Docker) fall back to the socket peer.
+     */
+    public function clientIp(): string
+    {
+        $realIp = trim($this->header('X-Real-IP'));
+        if (filter_var($realIp, FILTER_VALIDATE_IP) !== false) {
+            return $realIp;
+        }
+        return (string) ($this->server['REMOTE_ADDR'] ?? 'unknown');
+    }
+
     public function isHttps(): bool
     {
         $https = $this->server['HTTPS'] ?? '';

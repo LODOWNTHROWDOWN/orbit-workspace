@@ -27,3 +27,10 @@ CREATE TABLE IF NOT EXISTS tasks (
  CONSTRAINT fk_tasks_project FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
  INDEX idx_task_project_status(project_id,status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS rate_limits (
+ bucket CHAR(64) NOT NULL,
+ window_start INT UNSIGNED NOT NULL,
+ hits INT UNSIGNED NOT NULL DEFAULT 0,
+ PRIMARY KEY (bucket, window_start),
+ INDEX idx_rate_window(window_start)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

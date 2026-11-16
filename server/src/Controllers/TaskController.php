@@ -8,11 +8,11 @@ use Orbit\Http\Request;
 use Orbit\Http\Response;
 use Orbit\Repositories\ProjectRepository;
 use Orbit\Repositories\TaskRepository;
+use Orbit\Limits;
 use Orbit\Validator;
 
 final class TaskController
 {
-    public const MAX_PER_PROJECT = 150;
     private const PRIORITIES = ['low', 'medium', 'high'];
     private const STATUSES = ['todo', 'progress', 'done'];
 
@@ -40,8 +40,8 @@ final class TaskController
         $priority = Validator::oneOf($body['priority'] ?? 'medium', self::PRIORITIES, 'Invalid priority.');
         $dueDate = Validator::optionalDate($body['due_date'] ?? null);
 
-        if ($this->tasks->countForProject($projectId) >= self::MAX_PER_PROJECT) {
-            throw new HttpException(422, 'Demo limit: ' . self::MAX_PER_PROJECT . ' tasks per project.');
+        if ($this->tasks->countForProject($projectId) >= Limits::TASKS_PER_PROJECT) {
+            throw new HttpException(422, 'Demo limit: ' . Limits::TASKS_PER_PROJECT . ' tasks per project.');
         }
 
         $id = $this->tasks->create($projectId, $title, $description, $priority, $dueDate);

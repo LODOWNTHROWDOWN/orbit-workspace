@@ -19,6 +19,11 @@ final class WorkspaceRepository
         return $id === false ? null : (int) $id;
     }
 
+    public function countActive(): int
+    {
+        return (int) $this->db->query('SELECT COUNT(*) FROM workspaces WHERE expires_at > UTC_TIMESTAMP()')->fetchColumn();
+    }
+
     public function create(string $tokenHash, int $lifetimeSeconds): int
     {
         $stmt = $this->db->prepare(
